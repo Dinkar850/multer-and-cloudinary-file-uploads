@@ -1,7 +1,8 @@
 ## Contents
 
-- [Passowrd change](#1-change-password)
+- [Password change](#1-change-password)
 - [Deleting an image](#2-delete-image-functionality)
+- [Pagination for fetched images](#3-pagination-for-fetching-images-at-a-time)
 
 ## 1. Change password
 
