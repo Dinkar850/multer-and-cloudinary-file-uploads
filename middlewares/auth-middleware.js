@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 
 const authMiddleware = (req, res, next) => {
-  console.log("auth middleware is called");
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
   if (!token) {
@@ -15,7 +14,6 @@ const authMiddleware = (req, res, next) => {
   //decode this token now
   try {
     const decodedTokenInfo = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    console.log(decodedTokenInfo);
     req.userInfo = decodedTokenInfo;
     next(); //otherwise we allow to go no next and access the page
   } catch (e) {

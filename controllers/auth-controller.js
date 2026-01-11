@@ -106,4 +106,61 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser };
+const changePassword = async (req, res) => {
+  try {
+    const userId = req.userInfo.userId;
+
+    const { oldPassword, newPassword } = req.body;
+
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing old or new password",
+      });
+    }
+
+    if (oldPassword === newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot have entered password same as old password",
+      });
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
+
+    if (!isPasswordMatch) {
+      return res.status(403).json({
+        success: false,
+        message: "Password entered does not match the current user password",
+      });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const newHashedPassword = await bcrypt.hash(newPassword, salt);
+
+    user.password = newHashedPassword;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Password changed successfully",
+    });
+  } catch (e) {
+    console.error("Error logging in user", e);
+    res.status(500).json({
+      success: false,
+      message: "Login failed",
+    });
+  }
+};
+
+module.exports = { registerUser, loginUser, changePassword };
